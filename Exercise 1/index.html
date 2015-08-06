@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMVbTDDEISXg_YtmGXmo60HVSzqpA4zkE&v=3.exp&signed_in=true"></script>
+    <script>
+      function initialize() {
+        var theirLatlng = new google.maps.LatLng(-25.363882,131.044922);
+        var myLatlng = new google.maps.LatLng(43.642804, -79.387096);
+        var mapOptions = {
+          zoom: 8,
+          center: myLatlng
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+        var theirMarker = new google.maps.Marker({
+            position: theirLatlng,
+            map: map,
+            title: 'Hello World!'
+        });
+
+        var myMarker = new google.maps.Marker({
+          position: myLatlng,
+          draggable: true,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          title: 'Hello All!'
+        });
+        google.maps.event.addListener(myMarker, 'click', toggleBounce());
+      }
+
+      function toggleBounce() {
+
+        if (marker.getAnimation() != null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
