@@ -29,22 +29,22 @@
             title: 'Hello World!'
         });
 
-        var myMarker = new google.maps.Marker({
+          myMarker = new google.maps.Marker({
           position: myLatlng,
           draggable: true,
           map: map,
           animation: google.maps.Animation.DROP,
           title: 'Hello All!'
         });
-        google.maps.event.addListener(myMarker, 'click', toggleBounce());
+        google.maps.event.addListener(myMarker, 'click', toggleBounce);
       }
 
       function toggleBounce() {
 
-        if (marker.getAnimation() != null) {
-          marker.setAnimation(null);
+        if (myMarker.getAnimation() != null) {
+          myMarker.setAnimation(null);
         } else {
-          marker.setAnimation(google.maps.Animation.BOUNCE);
+          myMarker.setAnimation(google.maps.Animation.BOUNCE);
         }
       }
 
