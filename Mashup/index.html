@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Simple markers</title>
+    <title>PhotoLoc</title>
     <style>
       html, body, #map-canvas {
         height: 100%;
@@ -12,17 +12,62 @@
       }
 
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMVbTDDEISXg_YtmGXmo60HVSzqpA4zkE&v=3.exp&signed_in=true"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMVbTDDEISXg_YtmGXmo60HVSzqpA4zkE&sensor=false" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="500px.js"></script>
     <script>
       function initialize() {
+          _500px.init({
+            sdk_key:  'd98a3d0de910b7ed722349da5bc5b988d233a714'
+          });
+
+          _500px.api('/photos', function(response){
+            for (var i = 0; i < response.data.photos.length; i++){
+              console.log(response.data.photos[i]);
+              var name = response.data.photos[i].name;
+              var lat=response.data.photos[i].latitude;
+              var lon=response.data.photos[i].longitude;
+              var location= new google.maps.LatLng(parseFloat(lat),parseFloat(lon));
+              if (response.data.photos[i].latitude !== null){
+                debugger;
+                sym = new google.maps.Marker({
+                  position: location, 
+                  map: map, 
+                  animation: google.maps.Animation.DROP,
+                  title:"Hello World!"
+                });
+
+                iW = new google.maps.InfoWindow({
+                  content: "<div><img width='254' height='355' src='"+response.data.photos[i].image_url+"'</div>"
+                })
+
+                google.maps.event.addListener(sym, 'click', function () {
+                toggleBounce();
+                iW.open(map, sym);
+                setTimeout(toggleBounce, 1500);
+              });
+
+              }else {
+                alert("no lat long");
+              }
+              // iW = new google.maps.InfoWindow({
+              //     content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
+              // });
+              
+              console.log(marker);
+              
+            }
+            
+          })
+
           var latlng = new google.maps.LatLng(43.642804, -79.387096); // Stockholm
           
               mapOptions = {
                   zoom: 14,
                   center: latlng
-              },
+              };
               
-              map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions),
+              map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
               
               
               marker = new google.maps.Marker({
@@ -30,11 +75,11 @@
                   map: map, 
                   animation: google.maps.Animation.DROP,
                   title:"Hello World!"
-              }),
-              
+              });
               infowindow = new google.maps.InfoWindow({
                   content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
               });
+              
           
           function toggleBounce () {
               if (marker.getAnimation() != null) {
