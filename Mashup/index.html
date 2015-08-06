@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMVbTDDEISXg_YtmGXmo60HVSzqpA4zkE&v=3.exp&signed_in=true"></script>
+    <script>
+      function initialize() {
+          var latlng = new google.maps.LatLng(43.642804, -79.387096); // Stockholm
+          
+              mapOptions = {
+                  zoom: 14,
+                  center: latlng
+              },
+              
+              map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions),
+              
+              
+              marker = new google.maps.Marker({
+                  position: latlng, 
+                  map: map, 
+                  animation: google.maps.Animation.DROP,
+                  title:"Hello World!"
+              }),
+              
+              infowindow = new google.maps.InfoWindow({
+                  content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
+              });
+          
+          function toggleBounce () {
+              if (marker.getAnimation() != null) {
+                  marker.setAnimation(null);
+              } else {
+                  marker.setAnimation(google.maps.Animation.BOUNCE);
+              }
+          }
+          
+          // Add click listener to toggle bounce
+          google.maps.event.addListener(marker, 'click', function () {
+              toggleBounce();
+              infowindow.open(map, marker);
+              setTimeout(toggleBounce, 1500);
+          });
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
