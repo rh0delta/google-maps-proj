@@ -16,12 +16,30 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="500px.js"></script>
     <script>
+      function toggleBounce(marker) {
+        if (marker.getAnimation() != null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+      }
+
+      function openInfoWindow(marker) {
+        console.log(marker);
+        var infoWindow = new google.maps.InfoWindow({
+          content: "<div><img width='254' height='355' title="+ marker.title +" src='"+marker.url+"'/></div>"
+        });
+
+        infoWindow.open(map, marker);
+
+      }
+      
       function initialize() {
           _500px.init({
             sdk_key:  'd98a3d0de910b7ed722349da5bc5b988d233a714'
           });
 
-          _500px.api('/photos', function(response){
+          _500px.api('/photos/search', {tag: 'geo'}, function(response){
             for (var i = 0; i < response.data.photos.length; i++){
               console.log(response.data.photos[i]);
               var name = response.data.photos[i].name;
@@ -29,71 +47,57 @@
               var lon=response.data.photos[i].longitude;
               var location= new google.maps.LatLng(parseFloat(lat),parseFloat(lon));
               if (response.data.photos[i].latitude !== null){
-                debugger;
-                sym = new google.maps.Marker({
+                // debugger;
+
+                var marker = new google.maps.Marker({
                   position: location, 
                   map: map, 
                   animation: google.maps.Animation.DROP,
-                  title:"Hello World!"
+                  title: response.data.photos[i].id.toString(),
+                  url: response.data.photos[i].image_url
+                });
+                google.maps.event.addListener(marker, 'click', function () {
+                  openInfoWindow(this);
+                  toggleBounce(this);
+                  setTimeout(toggleBounce, 1500);
                 });
 
-                iW = new google.maps.InfoWindow({
-                  content: "<div><img width='254' height='355' src='"+response.data.photos[i].image_url+"'</div>"
-                })
-
-                google.maps.event.addListener(sym, 'click', function () {
-                toggleBounce();
-                iW.open(map, sym);
-                setTimeout(toggleBounce, 1500);
-              });
-
-              }else {
+              } else {
                 alert("no lat long");
               }
-              // iW = new google.maps.InfoWindow({
-              //     content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
-              // });
               
-              console.log(marker);
               
             }
             
           })
 
+          // custom marker
           var latlng = new google.maps.LatLng(43.642804, -79.387096); // Stockholm
           
-              mapOptions = {
-                  zoom: 14,
-                  center: latlng
-              };
-              
-              map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-              
-              
-              marker = new google.maps.Marker({
-                  position: latlng, 
-                  map: map, 
-                  animation: google.maps.Animation.DROP,
-                  title:"Hello World!"
-              });
-              infowindow = new google.maps.InfoWindow({
-                  content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
-              });
-              
+          mapOptions = {
+            zoom: 3,
+            center: latlng
+          };
           
-          function toggleBounce () {
-              if (marker.getAnimation() != null) {
-                  marker.setAnimation(null);
-              } else {
-                  marker.setAnimation(google.maps.Animation.BOUNCE);
-              }
-          }
+          map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
           
+          
+          marker = new google.maps.Marker({
+            position: latlng, 
+            map: map, 
+            animation: google.maps.Animation.DROP,
+            title:"Hello World!"
+          });
+          
+          infowindow = new google.maps.InfoWindow({
+            content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
+          });
+              
           // Add click listener to toggle bounce
           google.maps.event.addListener(marker, 'click', function () {
-              toggleBounce();
-              infowindow.open(map, marker);
-              setTimeout(toggleBounce, 1500);
+            toggleBounce(marker);
+            infowindow.open(map, marker);
+            setTimeout(toggleBounce, 1500);
           });
       }
 
